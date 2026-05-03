@@ -2,35 +2,70 @@ import React, { useState } from 'react'
 import ProductList from './components/ProductList'
 import DarkModeToggle from './components/DarkModeToggle'
 import Cart from './components/Cart'
+import './App.css'
 
 const App = () => {
-  // TODO: Implement state for dark mode toggle
+  const [darkMode, setDarkMode] = useState(false)
+  const [cartItems, setCartItems] = useState([])
+  const [category, setCategory] = useState('all')
 
-  // TODO: Implement state for cart management
+  const handleAddToCart = (product) => {
+    setCartItems((prev) => {
+      const alreadyInCart = prev.find((item) => item.id === product.id)
+      if (alreadyInCart) return prev
+      return [...prev, product]
+    })
+  }
 
-  // TODO: Implement state for category filtering
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value)
+  }
 
   return (
-    <div>
-      <h1>🛒 Shopping App</h1>
-      <p>
-        Welcome! Your task is to implement filtering, cart management, and dark
-        mode.
-      </p>
+    <div className={`app-wrapper ${darkMode ? 'dark' : 'light'}`}>
+      <div className="app-container">
+        <header className="app-header">
+          <div className="header-top">
+            <div className="brand">
+              <span className="brand-icon">🛒</span>
+              <div>
+                <h1 className="brand-name">FreshMart</h1>
+                <p className="brand-tagline">Your daily grocery companion</p>
+              </div>
+            </div>
+            <DarkModeToggle darkMode={darkMode} setDarkMode={setDarkMode} />
+          </div>
+        </header>
 
-      {/* TODO: Render DarkModeToggle and implement dark mode functionality */}
+        <main className="app-main">
+          <div className="shop-section">
+            <div className="filter-bar">
+              <span className="filter-label">Filter by Category:</span>
+              <div className="select-wrapper">
+                <select
+                  className="category-select"
+                  value={category}
+                  onChange={handleCategoryChange}
+                >
+                  <option value="all">All Products</option>
+                  <option value="Fruits">🍎 Fruits</option>
+                  <option value="Dairy">🥛 Dairy</option>
+                </select>
+              </div>
+            </div>
 
-      {/* TODO: Implement category filter dropdown */}
-      <label>Filter by Category: </label>
-      <select>
-        <option value="all">All</option>
-        <option value="Fruits">Fruits</option>
-        <option value="Dairy">Dairy</option>
-      </select>
+            <ProductList
+              category={category}
+              onAddToCart={handleAddToCart}
+              cartItems={cartItems}
+            />
+          </div>
 
-      <ProductList />
-
-      {/* TODO: Implement and render Cart component */}
+          <aside className="cart-section">
+            <Cart cartItems={cartItems} />
+          </aside>
+        </main>
+      </div>
     </div>
   )
 }
